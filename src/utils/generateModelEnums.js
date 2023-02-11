@@ -1,13 +1,13 @@
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 
 // Utils
-const logger = require('./winston');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
 // Db
 const dbModels = require('../../../Cadence-Brain/src/db/models');
+const logger = require('./logger');
 
 const MODEL_ENUMS_FILE_NAME = 'modelEnums.js';
 
@@ -35,15 +35,15 @@ Object.keys(dbModels).map((model_name) => {
   all_models.push(model_name);
 });
 
-//console.log(`DB_TABLES: `, DB_TABLES);
+//logger(`DB_TABLES: `, DB_TABLES);
 
-//console.log(`DB_MODELS: `, DB_MODELS);
+//logger(`DB_MODELS: `, DB_MODELS);
 
 const dbModelsRequireStatement = `const { ${all_models.join(
   ','
 )} } = require("../db/models")`;
 
-//console.log(all_models.join(','));
+//logger(all_models.join(','));
 
 contentForFile =
   dbModelsRequireStatement +
@@ -70,7 +70,7 @@ contentForFile += `}` + '\n\n';
 
 contentForFile += `module.exports = { DB_TABLES,DB_MODELS }`;
 
-console.log(contentForFile);
+logger.info(contentForFile);
 
 if (fs.existsSync(MODEL_ENUMS_FILE_PATH)) {
   logger.info(`Deleting ${MODEL_ENUMS_FILE_PATH}`);
@@ -93,7 +93,7 @@ exec(
         `Error occured while generating ${MODEL_ENUMS_FILE_ESCAPED_PATH}: `,
         err
       );
-    console.log(`STDOUT: `, stdout);
-    console.log(`STDERR: `, stderr);
+    logger.info(`STDOUT: `, stdout);
+    logger.info(`STDERR: `, stderr);
   }
 );

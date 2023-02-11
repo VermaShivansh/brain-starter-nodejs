@@ -19,7 +19,7 @@ const decrypt = (text) => {
 
     return [decryptedText, null];
   } catch (err) {
-    console.error(`Error while decrypting text: `, err);
+    logger.error(`Error while decrypting text: `, err);
     return [null, err.message];
   }
 };

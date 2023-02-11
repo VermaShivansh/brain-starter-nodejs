@@ -42,6 +42,15 @@ module.exports = (sequelize, Sequelize) => {
           notEmpty: { msg: 'User last name must not be empty' },
         },
       },
+      full_name: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.first_name} ${this.last_name}`;
+        },
+        set(value) {
+          throw new Error('Do not try to set the `fullName` value!');
+        },
+      },
       primary_email: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -55,8 +64,8 @@ module.exports = (sequelize, Sequelize) => {
       password: {
         type: Sequelize.STRING,
         allowNull: true,
-        set() {
-          const [ecryptedPassword, err] = encrypt(this.password);
+        set(value) {
+          const [ecryptedPassword, err] = encrypt(value);
           if (err) {
             throw new Error(err);
           }
